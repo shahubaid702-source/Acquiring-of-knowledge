@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>contact us</title>
+</head>
+<style>
+    body {
+    margin: 0;
+    padding: 0;
+    background: url(masjid\ contact.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+/* Center form */
+.wrapper{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form {
+    width: 350px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+footer {
+    text-align: center;
+    background-color: rgb(5, 48, 5);
+    color: white;
+    padding: 15px 0;
+}
+    /* Inputs */
+    input,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0 15px;
+        border: none;
+        border-radius: 5px;
+    }
+
+    /* Button Size Big */
+    button {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #005fcc;
+    }
+
+    h1 {
+        color: white;
+        font-size: 50px;
+        text-align: center;
+    }
+
+  
+</style>
+
+<body>
+
+    <div class="wrapper">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <form action="https://sheetdb.io/api/v1/q9f85kticwdr0" method="post">
+                Name<input type="text" name="data[NAME]" id="uname" placeholder="Enter your name">
+                Email<input type="Email" name="data[EMAIL]" id="uemail" placeholder="Enter your name">
+                Your message<textarea name="data[MESSAGE]" id="umessage" placeholder="Enter your message"></textarea>
+                <button class="btn" onclick="myclick()">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <SCript>
+        function myclick() {
+            alert("your message is submitted")
+        }
+    </SCript>
+
+</body>
+ <footer>
+        Copyright &copy; All rights reserved
+        Designed by Ubaid Shah </footer>
+
+</html>

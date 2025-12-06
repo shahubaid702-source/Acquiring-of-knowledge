@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hadith Browser — Bukhari / Muslim / Tirmidhi</title>
+
+  <!-- Fonts (Nastaliq for Urdu if available) -->
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    :root{
+      --primary: rgb(5, 48, 5);
+      --muted:#6b7280;
+      --card:#ffffff;
+      --bg:#f3f6f8;
+      --radius:12px;
+      font-family: 'Amiri', serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:#111827;
+      line-height:1.5;
+      padding:20px;
+    }
+
+    header{
+      background:var(--primary);
+      color:white;
+      padding:18px;
+      border-radius:8px;
+      text-align:center;
+      font-size:20px;
+      margin-bottom:18px;
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    select, input[type="number"], button{
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #d1d5db;
+      font-size:15px;
+      background:white;
+    }
+
+    button.primary{
+      background:var(--primary);
+      color:white;
+      border:none;
+      cursor:pointer;
+    }
+
+    button.ghost{
+      background:transparent;
+      border:1px solid #cbd5e1;
+      cursor:pointer;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:16px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:0 6px 18px rgba(15,23,42,0.06);
+    }
+
+    .meta{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      margin-bottom:10px;
+    }
+
+    .arabic{
+      font-size:26px;
+      text-align:right;
+      direction:rtl;
+      margin-bottom:12px;
+      color:#0f172a;
+      line-height:2;
+    }
+
+    .translation{
+      margin-bottom:8px;
+    }
+body{
+    background-image: url(jamia-masjid-kashmir.jpg);
+    background-repeat: no-repeat;
+    background-size: 1200px;
+}
+    .urdu{
+      font-size:20px;
+      margin-bottom:8px;
+      /* if you add Nastaliq font you can set it here */
+    }
+
+    .small{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    #hadithList{
+      display:grid;
+      gap:12px;
+    }
+
+    .center{
+      text-align:center;
+    }
+
+    /* Responsive */
+    @media(min-width:760px){
+      .layout{ grid-template-columns: 1fr 380px; }
+      .controls{ align-items:center; }
+    }
+  </style>
+</head>
+<body>
+
+<header>📚 Hadith Browser — Bukhari · Muslim · Tirmidhi</header>
+
+<div class="controls card">
+  <div style="display:flex;gap:8px;flex-wrap:wrap;flex:1;">
+    <label class="small" style="align-self:center;margin-right:6px;">Collection:</label>
+    <select id="collection">
+      <option value="bukhari">Sahih Bukhari</option>
+      <option value="muslim">Sahih Muslim</option>
+      <option value="tirmidhi">Jami Tirmidhi</option>
+    </select>
+
+    <label class="small" style="align-self:center;margin-right:6px;margin-left:8px;">Book # (optional):</label>
+    <input id="bookNum" type="number" min="1" placeholder="e.g. 1" style="width:110px;">
+
+    <label class="small" style="align-self:center;margin-right:6px;margin-left:8px;">Chapter # (optional):</label>
+    <input id="chapterNum" type="number" min="1" placeholder="e.g. 1" style="width:110px;">
+  </div>
+
+  <div style="display:flex;gap:8px;">
+    <button id="fetchBtn" class="primary">Fetch</button>
+    <button id="randomBtn" class="ghost">Random Hadith</button>
+    <button id="clearBtn" class="ghost">Clear</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div>
+    <div id="status" class="card small">Ready — select collection and click Fetch or Random.</div>
+
+    <div id="hadithList" style="margin-top:12px;"></div>
+  </div>
+
+  <aside>
+    <div class="card">
+      <h3 style="margin:0 0 8px 0;">How to use</h3>
+      <p class="small">• Select collection (Bukhari / Muslim / Tirmidhi).<br>
+      • Optionally enter Book # and Chapter # for more specific results.<br>
+      • Click <b>Fetch</b> to get list, or <b>Random Hadith</b> for one random item.<br>
+      • If your chosen API requires an API key, replace the <code>API_BASE</code> variable in the script.</p>
+      <hr>
+      <p class="small"><b>Note:</b> Different APIs return different field names. This page tries common response formats but you may adapt fields (arabic/text/english/urdu) to your API.</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+/*
+  Simple Hadith Fetcher (Single-file)
+  - By default this uses a generic endpoint pattern.
+  - If your API is different (eg. api.sunnah.com) update API_BASE and endpoints below.
+*/
+
+/* ===== CONFIG: change if you have a different API =====
+   Example: if using api.sunnah.com you'll need an API key and different endpoints.
+   For demonstration we use a public-like pattern:
+     GET {API_BASE}/hadiths?collection={collection}&book={book}&chapter={chapter}
+   or
+     GET {API_BASE}/hadiths/random?collection={collection}
+*/
+const API_BASE = "https://hadithapi.com/api"; // <- change to your real API if needed
+
+const collectionEl = document.getElementById('collection');
+const bookEl = document.getElementById('bookNum');
+const chapterEl = document.getElementById('chapterNum');
+const fetchBtn = document.getElementById('fetchBtn');
+const randomBtn = document.getElementById('randomBtn');
+const clearBtn = document.getElementById('clearBtn');
+const statusEl = document.getElementById('status');
+const hadithList = document.getElementById('hadithList');
+
+fetchBtn.addEventListener('click', () => {
+  const coll = collectionEl.value;
+  const book = bookEl.value.trim();
+  const chapter = chapterEl.value.trim();
+  fetchHadiths(coll, book || null, chapter || null);
+});
+
+randomBtn.addEventListener('click', () => {
+  const coll = collectionEl.value;
+  fetchRandomHadith(coll);
+});
+
+clearBtn.addEventListener('click', () => {
+  hadithList.innerHTML = '';
+  statusEl.textContent = 'Cleared.';
+});
+
+/* Utility: render a single hadith card */
+function renderHadith(h, sourceLabel){
+  // try to get common fields robustly:
+  const id = h.id || h.hadithNumber || h.number || '';
+  const arabic = h.arab || h.ar || h.textArabic || h.sanad || '';
+  const english = h.english || h.en || h.textEnglish || h.text || '';
+  const urdu = h.urdu || h.ur || h.textUrdu || '';
+  const grade = h.grade || h.hukm || h.classification || '';
+  const book = h.book || h.bookNumber || h.book_id || '';
+  const chapter = h.chapter || h.chapterNumber || h.chapter_id || '';
+
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  meta.innerHTML = `<div><strong>${sourceLabel}</strong> ${ id ? ' · #'+id : '' } ${ book ? ' · Book:'+book : '' } ${ chapter ? ' · Chap:'+chapter : '' }</div><div class="small">${grade || ''}</div>`;
+
+  const arab = document.createElement('div');
+  arab.className = 'arabic';
+  arab.innerHTML = arabic || '<span class="small">[Arabic not available]</span>';
+
+  const en = document.createElement('div');
+  en.className = 'translation';
+  en.innerHTML = `<b>English:</b> ${english || '<span class="small">[English not available]</span>'}`;
+
+  const ur = document.createElement('div');
+  ur.className = 'urdu';
+  ur.innerHTML = `<b>اردو:</b> ${urdu || '<span class="small">[Urdu not available]</span>'}`;
+
+  card.appendChild(meta);
+  card.appendChild(arab);
+  card.appendChild(en);
+  card.appendChild(ur);
+
+  return card;
+}
+
+/* Fetch list of hadiths (book/chapter optional) */
+async function fetchHadiths(collection, book=null, chapter=null){
+  hadithList.innerHTML = '';
+  statusEl.textContent = 'Loading...';
+  try{
+    // Build URL - adjust pattern if your API differs
+    let url = `${API_BASE}/hadiths?collection=${encodeURIComponent(collection)}`;
+    if(book) url += `&book=${encodeURIComponent(book)}`;
+    if(chapter) url += `&chapter=${encodeURIComponent(chapter)}`;
+
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Network response not ok: '+res.status);
+    const data = await res.json();
+
+    // Try to find array of hadiths in common places
+    let list = data.hadiths || data.data || data.results || data.hadith || data;
+    // If nested like { hadiths: { data: [...] } }
+    if(list && list.data) list = list.data;
+
+    if(!Array.isArray(list)) {
+      // maybe single hadith returned
+      if(typeof list === 'object' && Object.keys(list).length > 0){
+        list = [list];
+      } else {
+        throw new Error('No hadiths found in response.');
+      }
+    }
+
+    if(list.length === 0) {
+      statusEl.textContent = 'No hadith found for this query.';
+      return;
+    }
+
+    list.forEach(item => {
+      const card = renderHadith(item, capitalize(collection));
+      hadithList.appendChild(card);
+    });
+
+    statusEl.textContent = `Loaded ${list.length} hadith(s).`;
+  } catch(err){
+    console.error(err);
+    statusEl.textContent = 'Error: ' + err.message + ' — Check API endpoint or network.';
+    // show a helpful message and an example fallback hadith
+    const fallback = {
+      id: 'example-1',
+      arab: 'إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ',
+      english: 'Actions are judged by intentions.',
+      urdu: 'اعمال کا دارومدار نیتوں پر ہے۔'
+    };
+    hadithList.appendChild(renderHadith(fallback, 'Example (fallback)'));
+  }
+}
+
+/* Fetch a random hadith */
+async function fetchRandomHadith(collection){
+  hadithList.innerHTML = '';
+  statusEl.textContent = 'Loading random...';
+  try{
+    // Build URL - adjust if necessary
+    const url = `${API_BASE}/hadiths/random?collection=${encodeURIComponent(collection)}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('Network response not ok: '+res.status);
+    const data = await res.json();
+
+    // Try various shapes
+    let item = data.hadith || data.data || data.result || data;
+    if(Array.isArray(item) && item.length>0) item = item[0];
+
+    if(!item || Object.keys(item).length === 0) throw new Error('No hadith returned.');
+
+    hadithList.appendChild(renderHadith(item, capitalize(collection)));
+    statusEl.textContent = 'Random hadith loaded.';
+  } catch(err){
+    console.error(err);
+    statusEl.textContent = 'Error: ' + err.message;
+    // fallback example
+    const fallback = {
+      id: 'random-example',
+      arab: 'مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا',
+      english: 'Whoever follows a path seeking knowledge, Allah will make easy for him a path to Paradise.',
+      urdu: 'جو شخص علم حاصل کرنے کے لئے راستہ اختیار کرتا ہے اللہ اس کے لئے جنت کا راستہ آسان کر دیتا ہے۔'
+    };
+    hadithList.appendChild(renderHadith(fallback, 'Example (fallback)'));
+  }
+}
+
+/* Helper */
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+/* OPTIONAL: load Bukhari on start */
+document.addEventListener('DOMContentLoaded', () => {
+  // You may auto-load first book: uncomment next line
+  // fetchHadiths('bukhari');
+});
+</script>
+<footer>
+        Copyright &copy; All rights reserved
+        Created by Ubaid Shah </footer>
+</body>
+</html>

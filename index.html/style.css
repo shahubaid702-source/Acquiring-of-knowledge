@@ -1,0 +1,198 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+.image-text, li{
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    
+}
+/* Body */
+body {
+  background-color: #f0e1e1;
+  color: #333;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(5, 48, 5);
+  margin-top: 1%;
+
+}
+p{
+    margin: 10px;
+    padding: 10px;
+    font-weight: bold;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #222;
+    word-wrap: break-word;
+}
+header .logo img {
+  width: 120px;
+  height: auto;
+  border-radius: 12px;
+  border: 3px solid #110c0c;
+  margin: 3px;
+  
+}
+
+header ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  margin: 10px;
+}
+
+header ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: color 0.3s;
+ 
+}
+
+header ul li a:hover {
+  color: #ffcccc;
+}
+.Engineer{
+  font-size: large;
+  color: blue;
+  font-family: 'Courier New', Courier, monospace;
+}
+.video-row{
+  display: flex;
+  gap: 16px;                 /* space between videos on wide screens */
+  justify-content: center;   /* center horizontally */
+  align-items: center;
+  flex-wrap: wrap;           /* allow wrapping on small screens */
+  padding: 8px
+  
+}
+
+.responsive-video{
+   flex: 1;               /* dono equal width */
+  max-width: 48%;        /* side by side fit */
+  aspect-ratio: 16/9;    /* SAME HEIGHT for both */
+  width: 100%;
+  object-fit: cover;     /* video crop nahi hoga */
+  border-radius: 10px;
+  width: 100%;
+
+  height: auto;
+  
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+/* Mobile responsive */
+@media(max-width:600px){
+  .video-equal{
+    max-width: 100%; /* mobile par full width */
+  }
+}
+
+
+/* If you want two videos side-by-side on desktop, but stacked & centered on mobile: 
+.video-row > .responsive-video{
+  flex: 1 1 44%;    /* each video tries to take ~44% of row (leaving gap) on wide screens 
+  min-width: 260px; /* prevents them becoming too small */
+
+
+/* Mobile adjustments */
+@media (max-width: 500px){
+  .video-row{
+    gap: 12px;
+  }
+
+  .video-row > .responsive-video{
+    flex-basis: 100%;   /* full width (stacked) on small screens */
+    max-width: 100%;
+  }
+
+  .Engineer{
+    text-align: center; /* center the paragraph text on mobile */
+    margin-top: 10px;
+    padding: 0 12px;  
+  }
+}
+
+/* Optional: ensure paragraph centered always 
+.Engineer{
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+}*/
+footer {
+  text-align: center;
+  background-color: rgb(5, 48, 5);
+  color: white;
+  padding: 15px 0;
+  margin-top: 30px;
+}
+.footer2{
+  text-align: center;
+  background-color: rgb(5, 48, 5);;
+  color: white;
+  padding: 15px 0;
+  margin-top: 2000px;
+}
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 upar + 2 neeche */
+    gap: 20px;
+   width: 70%;
+   margin-left: 0;
+}
+
+.card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.card img {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.lines p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #1b7948;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.btn1{
+  background: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: 0.3s;
+}
+.social-icons a {
+  font-size: 30px;
+  margin-right: 10px;
+  color: #333;
+}
+.social-icons a:hover {
+  color: red;
+}
+

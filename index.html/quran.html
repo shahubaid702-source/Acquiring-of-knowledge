@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="web.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quran Webpage</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Nastaliq+Urdu&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Amiri', serif;
+      background: #f0f4f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background:  rgb(5, 48, 5);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    #container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .verse-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .arabic {
+      font-size: 30px;
+      text-align: right;
+      color: #2d3436;
+      margin-bottom: 12px;
+      line-height: 1.9;
+    }
+
+    .english {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #444;
+    }
+
+    .urdu {
+      font-family: 'Noto Nastaliq Urdu', serif;
+      font-size: 22px;
+      margin-bottom: 14px;
+      color: #2d3436;
+      line-height: 1.8;
+    }
+body{
+  background-image: url(ldd83089-720.jpg);
+}
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .playBtn {
+      background: #0b8457;
+      color: white;
+    }
+
+    .speakBtn {
+      background: #0984e3;
+      color: white;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>📖 Holy Quran (Arabic + English + Urdu)</header>
+
+<div id="container">
+  <select id="surahList"></select>
+  <div id="verses"></div>
+</div>
+
+<script>
+  // Load Surah List
+  fetch("https://api.alquran.cloud/v1/surah")
+    .then(res => res.json())
+    .then(data => {
+      let list = document.getElementById("surahList");
+      data.data.forEach(s => {
+        list.innerHTML += `<option value="${s.number}">${s.number}. ${s.englishName} (${s.name})</option>`;
+      });
+    });
+
+  // Load Surah When Selected
+  document.getElementById("surahList").addEventListener("change", function () {
+    loadSurah(this.value);
+  });
+
+  function loadSurah(num) {
+    fetch(`https://api.alquran.cloud/v1/surah/${num}/editions/ar.alafasy,en.asad,ur.jalandhry`)
+      .then(res => res.json())
+      .then(data => {
+        let arabic = data.data[0].ayahs;
+        let english = data.data[1].ayahs;
+        let urdu = data.data[2].ayahs;
+
+        const box = document.getElementById("verses");
+        box.innerHTML = "";
+
+        arabic.forEach((a, i) => {
+          box.innerHTML += `
+            <div class="verse-card">
+              <div class="arabic">${a.text}</div>
+
+              <div class="english"><b>English:</b> ${english[i].text}</div>
+              <div class="urdu"><b>اردو:</b> ${urdu[i].text}</div>
+
+              <div class="controls">
+                <button class="playBtn" onclick="playAudio('${a.audio}')">▶ Play</button>
+                <button class="speakBtn" onclick="speak('${urdu[i].text.replace(/'/g, "")}', 'ur-PK')">🔊 Urdu Speak</button>
+                <button class="speakBtn" onclick="speak('${english[i].text.replace(/'/g, "")}', 'en-US')">🔊 English Speak</button>
+              </div>
+            </div>
+          `;
+        });
+
+      });
+  }
+
+  // Play Audio
+  function playAudio(url) {
+    let audio = new Audio(url);
+    audio.play();
+  }
+
+  // Speak Translation
+  function speak(text, lang) {
+    speechSynthesis.cancel();
+    let utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang;
+    utter.rate = 1;
+    speechSynthesis.speak(utter);
+  }
+</script>
+
+</body>
+</html>
+
+<footer class="footer2">
+        Copyright &copy; All rights reserved
+        Created by Ubaid Shah </footer>
+    
+</body>
+</html>
