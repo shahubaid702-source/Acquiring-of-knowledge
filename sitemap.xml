@@ -1,10 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
     <loc>https://shahubaid702-source.github.io/Acquiring-of-knowledge/</loc>
-    <lastmod>2026-01-29</lastmod>
-    <priority>1.00</priority>
   </url>
+
+  <url>
+    <loc>https://shahubaid702-source.github.io/Acquiring-of-knowledge/about.html</loc>
+  </url>
+
+  <url>
+    <loc>https://shahubaid702-source.github.io/Acquiring-of-knowledge/contact.html</loc>
+  </url>
+
+  <url>
+    <loc>https://shahubaid702-source.github.io/Acquiring-of-knowledge/blog.html</loc>
+  </url>
+
 </urlset>
 
 
