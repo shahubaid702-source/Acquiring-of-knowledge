@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: 
+https://shahubaid702-source.github.io/Acquiring-of-Knowledge/sitemap.xml
